@@ -1,0 +1,619 @@
+openapi: '3.0.0'
+info:
+  version: '1.0'
+  title: Billie Paella
+  description: 'API Specification for Paella API'
+  contact:
+    email: "engineering@billie.io"
+servers:
+- url: https://paella.test10.ozean12.com/api/v1
+  variables: {}
+paths:
+  /order:
+    post:
+      summary: Create new order
+      tags:
+      - Order
+      operationId: OrderPost
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNewOrderApi'
+      responses:
+        201:
+          description: 'Order created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        400:
+          description: 'Order Invalid field or invalid field value'
+        401:
+          description: 'User is not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        500:
+          description: 'Unexpected server error'
+      security:
+      - api_key: []
+  /order/{order_id}/ship:
+    post:
+      summary: Create new order
+      parameters: 
+        - in: path
+          name: order_id
+          schema:
+            type: string
+          required: true
+          description: 'Order id'
+      tags:
+      - Order
+      operationId: OrderShip
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipOrder'
+      responses:
+        200:
+          description: 'Order shipped'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        400:
+          description: 'Order Invalid field or invalid field value'
+        401:
+          description: 'User is not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Order not found'
+        500:
+          description: 'Unexpected server error'
+      security:
+      - api_key: []
+  /order/{order_id}:
+    get:
+      summary: Create new order
+      parameters: 
+        - in: path
+          name: order_id
+          schema:
+            type: string
+          required: true
+          description: 'Order id'
+      tags:
+      - Order
+      operationId: RetrieveOrder
+      responses:
+        200:
+          description: 'Retrieve the order'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        401:
+          description: 'User is not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        404:
+          description: 'Order not found'
+        500:
+          description: 'Unexpected server error'
+      security:
+      - api_key: []
+    patch:
+      summary: Update order amount / duration
+      description: >
+        - If invoice_number, invoice_url and amount are present, then order amount gets updated. 
+        
+        - But when only duration then duration gets updated.
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchOrder'
+      parameters: 
+        - in: path
+          name: order_id
+          schema:
+            type: string
+          required: true
+          description: 'Order id'
+      tags:
+      - Order
+      operationId: PatchOrder
+      responses:
+        204:
+          description: 'Order updated'
+        400:
+          description: 'Order Invalid field or invalid field value'
+        401:
+          description: 'User is not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Order not found'
+        500:
+          description: 'Unexpected server error'
+      security:
+      - api_key: []
+  /order/{order_id}/cancel:
+    post:
+      summary: Order full cancellation
+      parameters: 
+        - in: path
+          name: order_id
+          schema:
+            type: string
+          required: true
+          description: 'Order id'
+      tags:
+      - Order
+      operationId: OrderFullCancellation
+      responses:
+        204:
+          description: 'Order cancelled'
+        401:
+          description: 'User is not autorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Order not found'
+        500:
+          description: 'Unexpected server error'
+      security:
+      - api_key: []
+  /order/{order_id}/confirm-payment:
+    post:
+      summary: Merchant payment confirmation
+      description: > 
+        Can be full or partial payment. If was paid too much, only order's amount will be direct debited.
+      parameters: 
+        - in: path
+          name: order_id
+          schema:
+            type: string
+          required: true
+          description: 'Order id'
+      tags:
+      - Order
+      operationId: MerchantPayment
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantPaymentRequest'
+      responses:
+        204:
+          description: 'Order payment confirmed'
+        401:
+          description: 'User is not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Order not found'
+        500:
+          description: 'Unexpected server error'
+      security:
+      - api_key: []
+components:
+  securitySchemes:
+    api_key:
+      type: "apiKey"
+      name: "X-Api-Key"
+      in: "header"
+  schemas:
+    CreateNewOrderApi:
+      title: "Create new order"
+      example:
+        debtor_person:
+          email: test-user@billie.io
+        debtor_company:
+          merchant_customer_id: 'MERCHANT_CUSTOMER_ID'
+          name: 'Billie GmbH'
+          address_addition: ''
+          address_house_number: '4'
+          address_street: 'Charlottenstraße'
+          address_city: 'Berlin'
+          address_postal_code: '10969'
+          address_country: DE
+          industry_sector: 'Sonstige Finanzierungsinstitutionen a. n. g.'
+          legal_form: 'GmbH'
+          tax_id: 111111
+          registration_number: 'HRB 182428 B'
+          established_customer: 1
+        delivery_address:
+          house_number: 13
+          street: 'Charlottenstraße'
+          city: 'Berlin'
+          postal_code: '10969'
+          country: DE
+        amount:
+          net: 450
+          gross: 500
+          tax: 50
+        comment: Hello, world!
+        duration: 10
+        order_id: someorderid-0
+      type: object
+      properties:
+        debtor_person:
+          $ref: '#/components/schemas/DebtorPerson'
+        debtor_company:
+          $ref: '#/components/schemas/DebtorCompany'
+        delivery_address:
+          $ref: '#/components/schemas/DeliveryAddress'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        comment:
+          description: ''
+          example: 'Hello, world!'
+          type: string
+        duration:
+          description: ''
+          example: 10
+          type: integer
+          format: int32
+        order_id:
+          description: ''
+          example: someorderid-0
+          type: string
+      required:
+      - debtor_person
+      - debtor_company
+      - amount
+      - duration
+      - order_id
+    DebtorPerson:
+      title: 'Debtor person'
+      example:
+        email: test-user@billie.io
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        salutation:
+          description: 'm/f'
+          example: 'f'
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone_number:
+          type: string
+          example: '+4900000000000'
+      required:
+      - email
+    DebtorCompanyOnOrderCreatedResponse:
+      title: 'Debtor company object on order created response'
+      type: object
+      properties:
+        name:
+          type: string
+        address_house_number:
+          description: ''
+          example: '4'
+          type: string
+        address_street:
+          description: ''
+          example: 'Charlottenstraße'
+          type: string
+        address_addition:
+          description: ''
+          example: '2OG L'
+          type: string
+        address_city:
+          description: ''
+          example: 'Berlin'
+          type: string
+        address_postal_code:
+          description: ''
+          example: '10969'
+          type: string
+        address_country:
+          description: 'ISO-3166-1 alpha-2 country code'
+          example: DE
+          type: string
+      required:
+      - name
+      - address_house_number
+      - address_street
+      - address_addition
+      - address_city
+      - address_postal_code
+      - address_country
+    DebtorCompany:
+      title: 'Debtor company'
+      example:
+        merchant_customer_id: 'MERCHANT_CUSTOMER_ID'
+        name: 'Billie GmbH'
+        address_addition: ''
+        address_house_number: '4'
+        address_street: 'STREET'
+        address_city: 'Berlin'
+        address_postal_code: '10969'
+        address_country: DE
+        industry_sector: Handel und Vermietung
+        legal_form: 'GmbH'
+        tax_id: 111111
+        registration_number: 333333
+        established_customer: 1
+      type: object
+      properties:
+        merchant_customer_id:
+          description: ''
+          example: 'MERCHANT_CUSTOMER_ID'
+          type: string
+        name:
+          description: ''
+          example: 'Billie GmbH'
+          type: string
+        address_house_number:
+          description: ''
+          example: '4'
+          type: string
+        address_street:
+          description: ''
+          example: 'Charlottenstraße'
+          type: string
+        address_addition:
+          description: ''
+          example: '2OG L'
+          type: string
+        address_city:
+          description: ''
+          example: 'Berlin'
+          type: string
+        address_postal_code:
+          description: ''
+          example: '10969'
+          type: string
+        address_country:
+          description: 'ISO-3166-1 alpha-2 country code'
+          example: DE
+          type: string
+        industry_sector:
+          description: ''
+          example: 'Sonstige Finanzierungsinstitutionen a. n. g.'
+          type: string
+        subindustry_sector:
+          description: ''
+          example: 'Factoring'
+          type: string
+        legal_form:
+          description: ''
+          example: 'GmbH'
+          type: string
+        tax_id:
+          description: 'USt-ID'
+          example: 111111
+          type: string
+        registration_number:
+          description: ''
+          example: 'HRB 182428 B'
+          type: string
+        established_customer:
+          description: 'Either 1 or 0'
+          example: 1
+          type: boolean
+      required:
+      - merchant_customer_id
+      - name
+      - address_house_number
+      - address_street
+      - address_city
+      - address_postal_code
+      - address_country
+      - industry_sector
+      - legal_form
+    DeliveryAddress:
+      title: 'Delivery address'
+      example:
+        house_number: 4
+        street: 'Charlottenstraße'
+        city: 'Berlin'
+        postal_code: '10969'
+        country: DE
+      type: object
+      properties:
+        house_number:
+          description: ''
+          example: '4'
+          type: string
+        street:
+          description: ''
+          example: 'Charlottenstraße'
+          type: string
+        city:
+          description: ''
+          example: 'Berlin'
+          type: string
+        postal_code:
+          description: ''
+          example: '10969'
+          type: string
+        country:
+          description: ''
+          example: DE
+          type: string
+      required:
+      - house_number
+      - street
+      - city
+      - postal_code
+      - country
+    Amount:
+      title: 'Order amount'
+      example:
+        net: 450
+        gross: 500
+        tax: 50
+      type: object
+      properties:
+        net:
+          description: ''
+          example: 450
+          type: number
+          format: double
+        gross:
+          description: ''
+          example: 500
+          type: number
+          format: double
+        tax:
+          description: ''
+          example: 50
+          type: number
+          format: double
+      required:
+      - net
+      - gross
+      - tax
+    BankAccount:
+      title: "Debtor's virtual bank account"
+      type: object
+      properties:
+        iban:
+          type: string
+          description: "Virtual IBAN"
+        bic:
+          type: string
+      required:
+      - iban
+      - bic
+    Order:
+      title: "Order object"
+      type: object
+      properties:
+        order_id:
+          type: string
+        state:
+          type: string
+          description: 'canceled|declined|created|shipped|paid_out|late|completed'
+        bank_account:
+          $ref: '#/components/schemas/BankAccount'
+        debtor_company:
+          $ref: '#/components/schemas/DebtorCompanyOnOrderCreatedResponse'
+        invoice:
+          $ref: '#/components/schemas/Invoice'
+        reasons:
+          type: array
+          items:
+            type: string
+      required:
+      - order_id
+      - state
+      - bank_account
+    ShipOrder:
+      description: 'Shipping order request model'
+      type: object
+      properties:
+        invoice_number: 
+          type: string
+        invoice_url: 
+          type: string
+          format: url
+        shipping_document_url:
+          type: string
+      required:
+      - invoice_number
+      - invoice_url
+    PatchOrder:
+      description: 'Update order request model'
+      type: object
+      properties:
+        invoice_number: 
+          type: string
+        invoice_url: 
+          type: string
+          format: url
+        duration: 
+          type: number
+          format: int32
+        amount:
+          $ref: '#/components/schemas/Amount'
+    Invoice:
+      description: "Customer's invoice"
+      type: object
+      properties:
+        invoice_number:
+          type: string
+          example: 'IN-1111'
+        payout_amount:
+          type: number
+          format: double
+        fee_amount:
+          type: number
+          format: double
+        fee_rate:
+          type: number
+          format: double
+        due_date:
+          type: string
+          format: date
+          example: '2016-11-01'
+      required:
+      - invoice_number
+      - payout_amount
+      - fee_amount
+      - fee_rate
+      - due_date
+    MerchantPaymentRequest:
+      title: 'Request of merchant payment'
+      type: object
+      properties:
+        paid_amount:
+          type: number
+          format: double
+          example: 23.12
+      required:
+      - paid_amount
+    ErrorBlock:
+      title: "Error block"
+      type: object
+      properties:
+        title:
+          type: string
+        code:
+          type: string
+    ErrorUnauthorized:
+      title: 'Error API token is not authorized'
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorBlock'
+          example: 
+            -
+              title: 'Unauthorized'
+              code: 'unauthorized'
+

@@ -14,7 +14,7 @@ docker run -d -p 80:8080 swaggerapi/swagger-editor
 
 This will run Swagger Editor (in detached mode) on port 80 on your machine, so you can open it by navigating to `http://localhost` in your browser.
 
-- Import `swagger.yaml` and run tests
+- Import `openapi.yaml` and run tests
 
 ## How to create a library
 
