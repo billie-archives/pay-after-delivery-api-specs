@@ -526,9 +526,7 @@ components:
         invoice:
           $ref: '#/components/schemas/Invoice'
         reasons:
-          type: array
-          items:
-            type: string
+          type: string
       required:
       - order_id
       - state
