@@ -18,8 +18,7 @@ This will run Swagger Editor (in detached mode) on port 80 on your machine, so y
 
 ## How to create a library
 
-- Either using swagger UI
-- Or by [openapi-generator](https://github.com/OpenAPITools/openapi-generator). E.g. 
+Use [openapi-generator](https://github.com/OpenAPITools/openapi-generator). E.g. 
 ```
 openapi-generator generate -i https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/2_0/petstore.yaml -g php -o /Volumes/Development/billie/php-paella-api-sdk
 ```
