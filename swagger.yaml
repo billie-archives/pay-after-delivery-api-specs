@@ -1,0 +1,270 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Billie Paella
+  description: 'API Specification for Paella API'
+  contact:
+    email: "engineering@billie.io"
+host: paella.test10.ozean12.com
+basePath: /api/v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /order:
+    post:
+      summary: Create new order
+      tags:
+      - Create new order
+      operationId: OrderPost
+      produces:
+      - application/json
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/ApiEndpointCreateNewOrder'
+      responses:
+        200:
+          description: ''
+      security:
+      - api_key: []
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "X-Api-Key"
+    in: "header"
+definitions:
+  ApiEndpointCreateNewOrder:
+    title: "API endpoint: Create new order at paella"
+    example:
+      debtor_person:
+        email: test-user@billie.io
+      debtor_company:
+        merchant_customer_id: 'MERCHANT_CUSTOMER_ID'
+        name: 'COMPANY_NAME'
+        address_addition: 'ADDRESS_ADDITION'
+        address_house_number: 'HOUSE_NUMBER'
+        address_street: 'STREET'
+        address_city: 'CITY'
+        address_postal_code: 'POST_CODE'
+        address_country: DE
+        industry_sector: Handel und Vermietung
+        legal_form: 'LEGAL_FORM'
+        tax_id: 111111
+        registration_number: 333333
+        established_customer: 1
+      delivery_address:
+        house_number: 'HOUSE_NUMBER'
+        street: 'HOUSE_NUMBER'
+        city: 'CITY'
+        postal_code: 'POST_CODE'
+        country: DE
+      amount:
+        net: 450
+        gross: 500
+        tax: 50
+      comment: Hello, world!
+      duration: 10
+      order_id: someorderid-0
+    type: object
+    properties:
+      debtor_person:
+        $ref: '#/definitions/DebtorPerson'
+      debtor_company:
+        $ref: '#/definitions/DebtorCompany'
+      delivery_address:
+        $ref: '#/definitions/DeliveryAddress'
+      amount:
+        $ref: '#/definitions/Amount'
+      comment:
+        description: ''
+        example: Timestamp:{{$timestamp}}
+        type: string
+      duration:
+        description: ''
+        example: 10
+        type: integer
+        format: int32
+      order_id:
+        description: ''
+        example: someorderid-{{$randomInt}}{{$randomInt}}
+        type: string
+    required:
+    - debtor_person
+    - debtor_company
+    - delivery_address
+    - amount
+    - comment
+    - duration
+    - order_id
+  DebtorPerson:
+    title: DebtorPerson
+    example:
+      email: test-user@billie.io
+    type: object
+    properties:
+      email:
+        description: ''
+        example: test-user@billie.io
+        type: string
+    required:
+    - email
+  DebtorCompany:
+    title: DebtorCompany
+    example:
+      merchant_customer_id: 'MERCHANT_CUSTOMER_ID'
+      name: 'COMPANY_NAME'
+      address_addition: 'ADDRESS_ADDITION'
+      address_house_number: 'HOUSE_NUMBER'
+      address_street: 'STREET'
+      address_city: 'CITY'
+      address_postal_code: 'POST_CODE'
+      address_country: DE
+      industry_sector: Handel und Vermietung
+      legal_form: 'LEGAL_FORM'
+      tax_id: 111111
+      registration_number: 333333
+      established_customer: 1
+    type: object
+    properties:
+      merchant_customer_id:
+        description: ''
+        example: 'MERCHANT_CUSTOMER_ID'
+        type: string
+      name:
+        description: ''
+        example: 'COMPANY_NAME'
+        type: string
+      address_addition:
+        description: ''
+        example: 'ADDRESS_ADDITION'
+        type: string
+      address_house_number:
+        description: ''
+        example: 'HOUSE_NUMBER'
+        type: string
+      address_street:
+        description: ''
+        example: 'STREET'
+        type: string
+      address_city:
+        description: ''
+        example: 'CITY'
+        type: string
+      address_postal_code:
+        description: ''
+        example: 'POST_CODE'
+        type: string
+      address_country:
+        description: ''
+        example: DE
+        type: string
+      industry_sector:
+        description: ''
+        example: Handel und Vermietung
+        type: string
+      legal_form:
+        description: ''
+        example: 'LEGAL_FORM'
+        type: string
+      tax_id:
+        description: ''
+        example: 111111
+        type: string
+      registration_number:
+        description: ''
+        example: 333333
+        type: string
+      established_customer:
+        description: ''
+        example: 1
+        type: integer
+        format: int32
+    required:
+    - merchant_customer_id
+    - name
+    - address_addition
+    - address_house_number
+    - address_street
+    - address_city
+    - address_postal_code
+    - address_country
+    - industry_sector
+    - legal_form
+    - tax_id
+    - registration_number
+    - established_customer
+  DeliveryAddress:
+    title: DeliveryAddress
+    example:
+      house_number: 'HOUSE_NUMBER'
+      street: 'HOUSE_NUMBER'
+      city: 'CITY'
+      postal_code: 'POST_CODE'
+      country: DE
+    type: object
+    properties:
+      house_number:
+        description: ''
+        example: 'HOUSE_NUMBER'
+        type: string
+      street:
+        description: ''
+        example: 'HOUSE_NUMBER'
+        type: string
+      city:
+        description: ''
+        example: 'CITY'
+        type: string
+      postal_code:
+        description: ''
+        example: 'POST_CODE'
+        type: string
+      country:
+        description: ''
+        example: DE
+        type: string
+    required:
+    - house_number
+    - street
+    - city
+    - postal_code
+    - country
+  Amount:
+    title: Amount
+    example:
+      net: 450
+      gross: 500
+      tax: 50
+    type: object
+    properties:
+      net:
+        description: ''
+        example: 450
+        type: number
+        format: double
+      gross:
+        description: ''
+        example: 500
+        type: number
+        format: double
+      tax:
+        description: ''
+        example: 50
+        type: number
+        format: double
+    required:
+    - net
+    - gross
+    - tax
