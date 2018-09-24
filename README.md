@@ -1,6 +1,6 @@
 # Paella API spec
 
-## How to take a look on interactive documentation:
+## How to take a look on interactive documentation
 
 - Run the image from DockerHub
 There is a docker image published in [DockerHub](https://hub.docker.com/r/swaggerapi/swagger-editor/).
