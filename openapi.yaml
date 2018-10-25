@@ -117,7 +117,10 @@ paths:
     patch:
       summary: Update order amount / duration
       description: >
+        This call is for reducing the invoice amount (mostly for partial cancelation), which is always possible until debtor payed full.This call can also be used to move the due date into the future. This is possible starting after shipment was confirmed until last day before reaching the due date. The new duration is to be set (i.e. initial request for 30 days, shipment on the 01.01., due date = 31.01., update duration on 45 days, new due date = 15.02.).
+
         - If invoice_number, invoice_url and amount are present, then order amount gets updated.
+
         - But when only duration then duration gets updated.
       requestBody:
         description: ''
