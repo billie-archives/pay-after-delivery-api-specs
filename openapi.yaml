@@ -42,8 +42,8 @@ paths:
       - api_key: []
   /order/{order_id}/ship:
     post:
-      summary: Create new order
-      parameters: 
+      summary: Ship order
+      parameters:
         - in: path
           name: order_id
           schema:
@@ -84,8 +84,8 @@ paths:
       - api_key: []
   /order/{order_id}:
     get:
-      summary: Create new order
-      parameters: 
+      summary: Retrieve order
+      parameters:
         - in: path
           name: order_id
           schema:
@@ -117,8 +117,7 @@ paths:
     patch:
       summary: Update order amount / duration
       description: >
-        - If invoice_number, invoice_url and amount are present, then order amount gets updated. 
-        
+        - If invoice_number, invoice_url and amount are present, then order amount gets updated.
         - But when only duration then duration gets updated.
       requestBody:
         description: ''
@@ -188,9 +187,9 @@ paths:
   /order/{order_id}/confirm-payment:
     post:
       summary: Merchant payment confirmation
-      description: > 
+      description: >
         Can be full or partial payment. If was paid too much, only order's amount will be direct debited.
-      parameters: 
+      parameters:
         - in: path
           name: order_id
           schema:
@@ -209,6 +208,8 @@ paths:
       responses:
         204:
           description: 'Order payment confirmed'
+        400:
+          description: 'Order Invalid field or invalid field value'
         401:
           description: 'User is not authorized'
           content:
@@ -232,36 +233,6 @@ components:
   schemas:
     CreateNewOrderApi:
       title: "Create new order"
-      example:
-        debtor_person:
-          email: test-user@billie.io
-        debtor_company:
-          merchant_customer_id: 'MERCHANT_CUSTOMER_ID'
-          name: 'Billie GmbH'
-          address_addition: ''
-          address_house_number: '4'
-          address_street: 'Charlottenstraße'
-          address_city: 'Berlin'
-          address_postal_code: '10969'
-          address_country: DE
-          industry_sector: 'Sonstige Finanzierungsinstitutionen a. n. g.'
-          legal_form: 'GmbH'
-          tax_id: 111111
-          registration_number: 'HRB 182428 B'
-          established_customer: 1
-        delivery_address:
-          house_number: 13
-          street: 'Charlottenstraße'
-          city: 'Berlin'
-          postal_code: '10969'
-          country: DE
-        amount:
-          net: 450
-          gross: 500
-          tax: 50
-        comment: Hello, world!
-        duration: 10
-        order_id: someorderid-0
       type: object
       properties:
         debtor_person:
@@ -293,11 +264,10 @@ components:
       - order_id
     DebtorPerson:
       title: 'Debtor person'
-      example:
-        email: test-user@billie.io
       type: object
       properties:
         email:
+          example: 'debtor@billie.io'
           type: string
           format: email
         salutation:
@@ -306,8 +276,10 @@ components:
           type: string
         first_name:
           type: string
+          example: 'Bill'
         last_name:
           type: string
+          example: 'Llie'
         phone_number:
           type: string
           example: '+4900000000000'
@@ -353,20 +325,6 @@ components:
       - address_country
     DebtorCompany:
       title: 'Debtor company'
-      example:
-        merchant_customer_id: 'MERCHANT_CUSTOMER_ID'
-        name: 'Billie GmbH'
-        address_addition: ''
-        address_house_number: '4'
-        address_street: 'STREET'
-        address_city: 'Berlin'
-        address_postal_code: '10969'
-        address_country: DE
-        industry_sector: Handel und Vermietung
-        legal_form: 'GmbH'
-        tax_id: 111111
-        registration_number: 333333
-        established_customer: 1
       type: object
       properties:
         merchant_customer_id:
@@ -417,6 +375,10 @@ components:
           description: 'USt-ID'
           example: 111111
           type: string
+        tax_number:
+          description: ''
+          example: ''
+          type: string
         registration_number:
           description: ''
           example: 'HRB 182428 B'
@@ -437,12 +399,6 @@ components:
       - legal_form
     DeliveryAddress:
       title: 'Delivery address'
-      example:
-        house_number: 4
-        street: 'Charlottenstraße'
-        city: 'Berlin'
-        postal_code: '10969'
-        country: DE
       type: object
       properties:
         house_number:
@@ -473,10 +429,6 @@ components:
       - country
     Amount:
       title: 'Order amount'
-      example:
-        net: 450
-        gross: 500
-        tax: 50
       type: object
       properties:
         net:
@@ -535,9 +487,9 @@ components:
       description: 'Shipping order request model'
       type: object
       properties:
-        invoice_number: 
+        invoice_number:
           type: string
-        invoice_url: 
+        invoice_url:
           type: string
           format: url
         shipping_document_url:
@@ -549,12 +501,12 @@ components:
       description: 'Update order request model'
       type: object
       properties:
-        invoice_number: 
+        invoice_number:
           type: string
-        invoice_url: 
+        invoice_url:
           type: string
           format: url
-        duration: 
+        duration:
           type: number
           format: int32
         amount:
