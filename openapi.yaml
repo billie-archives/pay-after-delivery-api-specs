@@ -30,6 +30,10 @@ paths:
                 $ref: '#/components/schemas/Order'
         400:
           description: 'Order Invalid field or invalid field value'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
         401:
           description: 'User is not authorized'
           content:
@@ -565,8 +569,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorBlock'
-          example: 
+          example:
             -
               title: 'Unauthorized'
               code: 'unauthorized'
-
+    ErrorBadRequest:
+      title: 'Invalid request'
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              code:
+                type: string
+              source:
+                type: string
+          example:
+            -
+              title: 'Debtor can not be found'
+              code: '0001'
+              source: 'debtor_company'
+            -
+              title: 'Duration can not be empty'
+              code: '0002'
+              source: 'duration'
