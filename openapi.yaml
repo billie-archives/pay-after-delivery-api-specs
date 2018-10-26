@@ -231,6 +231,47 @@ paths:
           description: 'Unexpected server error'
       security:
       - api_key: []
+  /webhooks:
+    post:
+      tags:
+      - Webhook
+      description: Subscribes to order notifications
+      parameters:
+        - name: callbackUrl
+          in: query
+          description: Url where webhook data will be sent
+          required: true
+          schema:
+            type: string
+            format: uri
+            example: https://billies-server.com
+      responses:
+        '201':
+          description: Webhook successfully created
+          content:
+            application/json:
+              schema:
+                description: Webhook information
+                required:
+                  - webhookId
+                properties:
+                  webhookId:
+                    type: string
+                    example: 2531329f-fb09-4ef7-887e-84e648214436
+      callbacks:
+        onOrderChange:
+          '{$request.query.callbackUrl}':
+            post:
+              requestBody:
+                description: Order change payload
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Webhook'
+              responses:
+                '204':
+                  description: Data successfully received
+
 components:
   securitySchemes:
     api_key:
@@ -554,6 +595,24 @@ components:
           example: 23.12
       required:
       - paid_amount
+    Webhook:
+      title: Webhook for order change
+      type: object
+      properties:
+        event:
+          description: reminder|dunning1|dunning2|dunning3|rebooking|payment|dca
+          type: string
+        order_id:
+          type: string
+        amount:
+          type: string
+        open_amount:
+          type: string
+        url_notification:
+          type: string
+      required:
+        - event
+        - order_id
     ErrorBlock:
       title: "Error block"
       type: object
