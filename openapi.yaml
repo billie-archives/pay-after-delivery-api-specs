@@ -1,12 +1,12 @@
 openapi: '3.0.0'
 info:
   version: '1.0'
-  title: Billie Paella
-  description: 'API Specification for Paella API'
+  title: Billie Pay After Delivery
+  description: 'API Specification for Pay After Delivery API'
   contact:
     email: "engineering@billie.io"
 servers:
-- url: https://paella.test10.ozean12.com/api/v1
+- url: ''
   variables: {}
 paths:
   /order:
